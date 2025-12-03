@@ -1,10 +1,11 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import z from 'zod';
 import './App.css';
+import fallbackBadge from './assets/fallback-badge.svg';
 import sportyLogo from './assets/sporty-logo.webp';
 import LeagueFilters from './components/LeagueFilers';
 import LeagueList from './components/LeagueList';
-import { ALL_LEAGUES_URL } from './constants/api-url';
+import { API_CONSTANTS } from './constants/api-url';
 import { UI_CONSTANTS } from './constants/ui';
 import type { League } from './types/league';
 
@@ -22,6 +23,8 @@ function App() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sportFilter, setSportFilter] = useState('All');
+  const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
+
   const deferredSearchTerm = useDeferredValue(searchTerm);
   
   useEffect(() => {
@@ -31,7 +34,7 @@ function App() {
       setIsLoading(true);
       setFetchError(null);
       try {
-        const response = await fetch(ALL_LEAGUES_URL, { signal: controller.signal });
+        const response = await fetch(API_CONSTANTS.ALL_LEAGUES_URL, { signal: controller.signal });
         if (!response.ok) {
           throw new Error(`Network response for leagues fetch has errors: ${response.status}`);
         }
@@ -88,6 +91,34 @@ function App() {
     });
   }, [leagues, deferredSearchTerm, sportFilter]);
 
+  const fetchBadgeForLeague = async (leagueId: string) => {
+    try {
+      const response = await fetch(`${API_CONSTANTS.SEASON_BADGE_URL}${encodeURIComponent(leagueId)}`);
+      if (!response.ok) {
+        throw new Error(`Network response for season badge fetch has errors: ${response.status}`);
+      }
+      const data = await response.json();
+      const seasons = Array.isArray(data?.seasons) ? data.seasons : [];
+      
+      const rawBadge = seasons.find((s: { strBadge?: string | null }) => s?.strBadge)?.strBadge ?? '';
+      const badgeUrl = rawBadge.trim() !== '' ? rawBadge : fallbackBadge;
+      console.log({ badgeUrl });
+
+    } catch (error) {
+      console.error('Error fetching badge:', error);
+    }
+  }
+
+  const handleLeagueClick = (league: League | null) => {
+    if (!league) {
+      setSelectedLeague(null);
+      return;
+    }
+    setSelectedLeague(league);
+    fetchBadgeForLeague(league.idLeague);
+    console.log({ league })
+  };
+
   return (     
     <main className="page">
       <header className="nav">
@@ -123,7 +154,7 @@ function App() {
             ) : ( filteredLeagues.length === 0 ? (
               <div className="empty">{UI_CONSTANTS.EMPTY_STATE}</div>
             ) : (
-              <LeagueList leagues={filteredLeagues} />
+              <LeagueList leagues={filteredLeagues} onSelect={handleLeagueClick} />
             ))}
           </div>
         

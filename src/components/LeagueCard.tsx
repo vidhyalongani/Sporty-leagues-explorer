@@ -2,15 +2,16 @@ import type { League } from '../types/league';
 
 type LeagueCardProps = {
   league: League;
+  onClick: (league: League) => void;
 };
 
-function LeagueCard({ league }: LeagueCardProps) {
+function LeagueCard({ league, onClick }: LeagueCardProps) {
   return (
     <button
       key={league.idLeague}
       type="button"
       className="league-card"
-      onClick={(e) => e.preventDefault()}
+      onClick={() => onClick(league)}
       aria-label={`View ${league.strLeague}`}
     >
       <div className="league-card-initial">{league.strLeague.slice(0, 2).toUpperCase()}</div>

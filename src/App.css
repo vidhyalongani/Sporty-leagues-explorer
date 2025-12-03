@@ -417,6 +417,53 @@
   margin-top: var(--space-3);
 }
 
+.results-bottom {
+  text-align: left;
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.sport-dot {
+  background: #0d9737;
+}
+
+.alt-dot {
+  background: #ff3c4f;
+}
+
+.legend-text {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
 @media (max-width: 720px) {
   .nav {
     justify-content: center;

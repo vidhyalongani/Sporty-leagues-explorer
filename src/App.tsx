@@ -28,7 +28,7 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sportFilter, setSportFilter] = useState('All');
+  const [sportFilter, setSportFilter] = useState(UI_CONSTANTS.ALL_SPORTS_TERM);
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const [badgeMap, setBadgeMap] = useState<Record<string, string>>({});
   const inFlightBadgesRef = useRef<Set<string>>(new Set());
@@ -170,17 +170,32 @@ function App() {
               <LeagueList leagues={filteredLeagues} onSelect={handleLeagueClick} />
             ))}
           </div>
-          {
-            selectedLeague && (<BadgeModal
-              league={selectedLeague}
-              strBadge={badgeMap[selectedLeague.idLeague]}
-              onClose={() => setSelectedLeague(null)}
-            />)
-          }
-        
+          {!isLoading && (
+            <div className="footer-bar">
+              <div className="results-bottom" aria-live="polite">
+                Showing <strong>{filteredLeagues.length}</strong> of {leagues.length || '...'} leagues
+              </div>
+              <div className="legend">
+                <div className="legend-item">
+                  <span className="legend-dot sport-dot" aria-hidden="true" />
+                  <span className="legend-text">Sport</span>
+                </div>
+                <div className="legend-item">
+                  <span className="legend-dot alt-dot" aria-hidden="true" />
+                  <span className="legend-text">Alternate name</span>
+                </div>
+              </div>
+            </div>
+          )}      
         </div>
       </div>
-
+      {
+        selectedLeague && (<BadgeModal
+          league={selectedLeague}
+          strBadge={badgeMap[selectedLeague.idLeague]}
+          onClose={() => setSelectedLeague(null)}
+        />)
+      }
       <footer className="footer">© 2025 Sporty Group</footer>
     </main>
   )

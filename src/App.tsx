@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import z from 'zod';
 import './App.css';
 import fallbackBadge from './assets/fallback-badge.svg';
@@ -27,9 +27,9 @@ function App() {
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const [badgeMap, setBadgeMap] = useState<Record<string, string>>({});
 
-  const cacheBadgeForLeague = (leagueId: string, badgeUrl: string) => {
+  const cacheBadgeForLeague = useCallback((leagueId: string, badgeUrl: string) => {
     setBadgeMap(prev => ({ ...prev, [leagueId]: badgeUrl }));
-  };
+  }, []);
 
   const deferredSearchTerm = useDeferredValue(searchTerm);
   
@@ -76,9 +76,9 @@ function App() {
     return Array.from(uniqueSportSet).sort((a, b) => a.localeCompare(b));
   }, [leagues]);
 
-  const filterBySport = (selectedSport: string) => {
+  const filterBySport = useCallback((selectedSport: string) => {
     setSportFilter(selectedSport);
-  };
+  }, []);
 
   const filteredLeagues = useMemo(() => {
     const searchQuery = deferredSearchTerm.toLowerCase().trim();
@@ -94,7 +94,7 @@ function App() {
     });
   }, [leagues, deferredSearchTerm, sportFilter]);
 
-  const fetchBadgeForLeague = async (leagueId: string) => {
+  const fetchBadgeForLeague = useCallback(async (leagueId: string) => {
     try {
       const response = await fetch(`${API_CONSTANTS.SEASON_BADGE_URL}${encodeURIComponent(leagueId)}`);
       if (!response.ok) {
@@ -107,10 +107,11 @@ function App() {
       cacheBadgeForLeague(leagueId, badgeUrl);
     } catch (error) {
       console.error('Error fetching badge:', error);
+      cacheBadgeForLeague(leagueId, fallbackBadge);
     }
-  }
+  }, [cacheBadgeForLeague]);
 
-  const handleLeagueClick = (league: League | null) => {
+  const handleLeagueClick = useCallback((league: League | null) => {
     if (!league) {
       setSelectedLeague(null);
       return;
@@ -122,7 +123,7 @@ function App() {
       }
       return prev;
     });
-  };
+  }, [fetchBadgeForLeague]);
 
   return (     
     <main className="page">

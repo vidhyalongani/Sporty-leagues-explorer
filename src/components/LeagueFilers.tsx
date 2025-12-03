@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { UI_CONSTANTS } from "../constants/ui";
 
 type LeagueFiltersProps = {
@@ -8,7 +9,7 @@ type LeagueFiltersProps = {
   onSportChange: (value: string) => void;
 };
 
-export default function LeagueFilters({
+function LeagueFilters({
   searchTerm,
   sportFilter,
   sports,
@@ -51,3 +52,5 @@ export default function LeagueFilters({
     </section>
   );
 }
+
+export default memo(LeagueFilters);

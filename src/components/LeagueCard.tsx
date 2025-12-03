@@ -1,17 +1,18 @@
+import { memo } from 'react';
 import type { League } from '../types/league';
 
 type LeagueCardProps = {
   league: League;
-  onClick: (league: League) => void;
+  onSelect: (league: League) => void;
 };
 
-function LeagueCard({ league, onClick }: LeagueCardProps) {
+const LeagueCard = memo<LeagueCardProps>(function LeagueCard({ league, onSelect }: LeagueCardProps) {
   return (
     <button
       key={league.idLeague}
       type="button"
       className="league-card"
-      onClick={() => onClick(league)}
+      onClick={() => onSelect(league)}
       aria-label={`View ${league.strLeague}`}
     >
       <div className="league-card-initial">{league.strLeague.slice(0, 2).toUpperCase()}</div>
@@ -32,6 +33,6 @@ function LeagueCard({ league, onClick }: LeagueCardProps) {
       </div>
     </button>
   );
-};
+});
 
 export default LeagueCard;

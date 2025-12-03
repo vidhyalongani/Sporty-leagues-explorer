@@ -32,6 +32,7 @@ function App() {
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const [badgeMap, setBadgeMap] = useState<Record<string, string>>({});
   const inFlightBadgesRef = useRef<Set<string>>(new Set());
+  const hasFilters = searchTerm.length > 0 || sportFilter !== UI_CONSTANTS.ALL_SPORTS_TERM;
 
   const cacheBadgeForLeague = useCallback((leagueId: string, badgeUrl: string) => {
     setBadgeMap(prev => ({ ...prev, [leagueId]: badgeUrl }));
@@ -132,6 +133,11 @@ function App() {
     fetchBadgeForLeague(league.idLeague);
   }, [fetchBadgeForLeague]);
 
+  const clearFilters = () => {
+    setSearchTerm('')
+    setSportFilter(UI_CONSTANTS.ALL_SPORTS_TERM)
+  }
+
   return (     
     <main className="page">
       <header className="nav">
@@ -151,8 +157,10 @@ function App() {
             searchTerm={searchTerm}
             sportFilter={sportFilter}
             sports={sports}
+            hasFilters={hasFilters}
             onSearchChange={setSearchTerm}
             onSportChange={filterBySport}
+            onClear={clearFilters}
           />
           
           {fetchError && (

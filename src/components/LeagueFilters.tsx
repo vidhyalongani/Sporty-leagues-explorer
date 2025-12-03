@@ -5,16 +5,20 @@ type LeagueFiltersProps = {
   searchTerm: string;
   sportFilter: string;
   sports: string[];
+  hasFilters: boolean;
   onSearchChange: (value: string) => void;
   onSportChange: (value: string) => void;
+  onClear: () => void;
 };
 
 function LeagueFilters({
   searchTerm,
   sportFilter,
   sports,
+  hasFilters,
   onSearchChange,
   onSportChange,
+  onClear,
 }: LeagueFiltersProps) {
   return (
     <section className="controls" aria-label="Filters">
@@ -34,6 +38,11 @@ function LeagueFilters({
       <div className="control-group">
         <div className="label-row">
           <span>Sport</span>
+          {hasFilters && (
+            <button className="clear-btn" type="button" onClick={onClear}>
+              Clear filters
+            </button>
+          )}
         </div>
         <select
           className="select"

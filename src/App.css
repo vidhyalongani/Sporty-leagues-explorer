@@ -217,6 +217,35 @@
   background: #fff1f3;
   border-color: #b91c1c;
 }
+.empty,
+.error {
+  text-align: center;
+  padding: var(--space-5) var(--space-4);
+  color: var(--muted);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+}
+.loader {
+  display: grid;
+  gap: var(--space-3);
+}
+.skeleton {
+  height: 70px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, #e2e8f0, #f1f5f9, #e2e8f0);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
 .controls {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -386,4 +415,109 @@
   gap: var(--space-3);
   flex-wrap: wrap;
   margin-top: var(--space-3);
+}
+
+@media (max-width: 720px) {
+  .nav {
+    justify-content: center;
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+
+  .nav-inner {
+    justify-content: center;
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+    width: 100%;
+  }
+
+  .brand-text .title {
+    font-size: 0.95rem;
+  }
+
+  .brand-logo {
+    height: 30px;
+  }
+
+  .content {
+    padding: var(--space-4) var(--space-3) var(--space-5);
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    padding: var(--space-3);
+  }
+
+  .grid {
+    max-width: 100%;
+    margin: 0 0 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .league-card {
+    grid-template-columns: auto 1fr;
+    align-items: flex-start;
+  }
+
+  .league-card-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .league-tag-row {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 420px) {
+  .content {
+    padding: var(--space-3) var(--space-3) var(--space-4);
+  }
+
+  .controls {
+    grid-template-columns: 1fr;
+    padding: var(--space-3);
+  }
+
+  .brand-logo {
+    height: 26px;
+  }
+
+  .nav {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .nav-inner {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .league-card {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    min-height: 0;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .badge-img {
+    max-height: 180px;
+    padding: var(--space-3);
+  }
+
+  .modal {
+    padding: var(--space-3);
+  }
+
+  .modal-title {
+    font-size: 1rem;
+  }
 }

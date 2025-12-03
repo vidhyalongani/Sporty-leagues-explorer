@@ -1,11 +1,12 @@
 import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import z from 'zod';
-import './App.css';
+import './app-d.css';
 import fallbackBadge from './assets/fallback-badge.svg';
 import sportyLogo from './assets/sporty-logo.webp';
 import BadgeModal from './components/BadgeModal';
-import LeagueFilters from './components/LeagueFilers';
+import LeagueFilters from './components/LeagueFilters';
 import LeagueList from './components/LeagueList';
+import Loader from './components/Loader';
 import { API_CONSTANTS } from './constants/api-url';
 import { UI_CONSTANTS } from './constants/ui';
 import type { League } from './types/league';
@@ -162,25 +163,25 @@ function App() {
 
           <div className="list-container">
             {isLoading ? (
-              <span className="loading">Loading leagues...</span>
+              <Loader />
             ) : ( filteredLeagues.length === 0 ? (
               <div className="empty">{UI_CONSTANTS.EMPTY_STATE}</div>
             ) : (
               <LeagueList leagues={filteredLeagues} onSelect={handleLeagueClick} />
             ))}
           </div>
-          {
-            selectedLeague && (<BadgeModal
-              league={selectedLeague}
-              strBadge={badgeMap[selectedLeague.idLeague]}
-              onClose={() => setSelectedLeague(null)}
-            />)
-          }
-        
         </div>
       </div>
 
       <footer className="footer">© 2025 Sporty Group</footer>
+
+      {
+        selectedLeague && (<BadgeModal
+          league={selectedLeague}
+          strBadge={badgeMap[selectedLeague.idLeague]}
+          onClose={() => setSelectedLeague(null)}
+        />)
+      }
     </main>
   )
 }

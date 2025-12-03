@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import z from 'zod';
 import './App.css';
 import sportyLogo from './assets/sporty-logo.webp';
+import LeagueFilters from './components/LeagueFilers';
 import LeagueList from './components/LeagueList';
 import { ALL_LEAGUES_URL } from './constants/api-url';
 import type { League } from './types/league';
@@ -18,7 +19,10 @@ function App() {
   const [leagues, setLeagues] = useState<League[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sportFilter, setSportFilter] = useState('All');
+  const sports = ['Soccer', 'Basketball', 'Baseball', 'Hockey', 'Tennis', 'Cricket'];
+  
   useEffect(() => {
     const controller = new AbortController();
 
@@ -72,6 +76,13 @@ function App() {
       <div className="content">
         <div className="content-inner">
           <section className="controls" aria-label="Filters">
+            <LeagueFilters
+              searchTerm={searchTerm}
+              sportFilter={sportFilter}
+              sports={sports}
+              onSearchChange={setSearchTerm}
+              onSportChange={setSportFilter}
+            />
           </section>
           <section className="leagues" aria-label="Leagues List">
             {fetchError && (

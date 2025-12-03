@@ -3,6 +3,7 @@ import z from 'zod';
 import './App.css';
 import fallbackBadge from './assets/fallback-badge.svg';
 import sportyLogo from './assets/sporty-logo.webp';
+import BadgeModal from './components/BadgeModal';
 import LeagueFilters from './components/LeagueFilers';
 import LeagueList from './components/LeagueList';
 import { API_CONSTANTS } from './constants/api-url';
@@ -161,6 +162,13 @@ function App() {
               <LeagueList leagues={filteredLeagues} onSelect={handleLeagueClick} />
             ))}
           </div>
+          {
+            selectedLeague && (<BadgeModal
+              league={selectedLeague}
+              strBadge={badgeMap[selectedLeague.idLeague]}
+              onClose={() => setSelectedLeague(null)}
+            />)
+          }
         
         </div>
       </div>

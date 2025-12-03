@@ -10,10 +10,6 @@ Single-page React/Vite app to explore sports leagues via TheSportsDB API. Search
 - Build for production: `npm run build`
 - Run tests: `npm test` (Vitest + RTL, jsdom)
 
-## Demo
-
-[Live Demo](https://vidhyalongani.github.io/Sporty-leagues-explorer/)
-
 ## Notes and decisions
 
 - **API & caching:** League results are cached at module level to avoid re-fetching on remount. Badges use an in-flight guard plus cache; fallback badge is used on errors.

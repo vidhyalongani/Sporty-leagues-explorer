@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import z from 'zod';
 import './App.css';
 import sportyLogo from './assets/sporty-logo.webp';
 import LeagueFilters from './components/LeagueFilers';
 import LeagueList from './components/LeagueList';
 import { ALL_LEAGUES_URL } from './constants/api-url';
+import { UI_CONSTANTS } from './constants/ui';
 import type { League } from './types/league';
 
 const leaguesCache = { current: null as League[] | null };
@@ -21,6 +22,7 @@ function App() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sportFilter, setSportFilter] = useState('All');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   
   useEffect(() => {
     const controller = new AbortController();
@@ -68,6 +70,24 @@ function App() {
     return Array.from(uniqueSportSet).sort((a, b) => a.localeCompare(b));
   }, [leagues]);
 
+  const filterBySport = (selectedSport: string) => {
+    setSportFilter(selectedSport);
+  };
+
+  const filteredLeagues = useMemo(() => {
+    const searchQuery = deferredSearchTerm.toLowerCase().trim();
+    const searchQueryLength = searchQuery.length;
+    return leagues.filter((league) => {
+      const matchesSearchTerm =
+        searchQueryLength === 0 ||
+        league.strLeague.toLowerCase().includes(searchQuery) ||
+        league.strLeagueAlternate.toLowerCase().includes(searchQuery);
+
+      const matchesSport = sportFilter === UI_CONSTANTS.ALL_SPORTS_TERM || league.strSport === sportFilter;
+      return matchesSearchTerm && matchesSport;
+    });
+  }, [leagues, deferredSearchTerm, sportFilter]);
+
   return (     
     <main className="page">
       <header className="nav">
@@ -89,7 +109,7 @@ function App() {
               sportFilter={sportFilter}
               sports={sports}
               onSearchChange={setSearchTerm}
-              onSportChange={setSportFilter}
+              onSportChange={filterBySport}
             />
           </section>
           <section className="leagues" aria-label="Leagues List">
@@ -102,9 +122,11 @@ function App() {
             <div className="list-container">
               {isLoading ? (
                 <span className="loading">Loading leagues...</span>
+              ) : ( filteredLeagues.length === 0 ? (
+                <div className="empty">{UI_CONSTANTS.EMPTY_STATE}</div>
               ) : (
-                <LeagueList leagues={leagues} />
-              )}
+                <LeagueList leagues={filteredLeagues} />
+              ))}
             </div>
           </section>
         </div>

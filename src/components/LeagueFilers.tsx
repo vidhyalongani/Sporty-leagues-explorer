@@ -1,3 +1,5 @@
+import { UI_CONSTANTS } from "../constants/ui";
+
 type LeagueFiltersProps = {
   searchTerm: string;
   sportFilter: string;
@@ -22,10 +24,10 @@ export default function LeagueFilters({
         <input
           className="input"
           type="search"
-          placeholder="Search by league or alternate name"
+          placeholder={UI_CONSTANTS.SEARCH_LEAGUES_PLACEHOLDER}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          aria-label="Search leagues"
+          aria-label={UI_CONSTANTS.SEARCH_LEAGUES_PLACEHOLDER}
         />
       </div>
       <div className="control-group">
@@ -36,9 +38,9 @@ export default function LeagueFilters({
           className="select"
           value={sportFilter}
           onChange={(e) => onSportChange(e.target.value)}
-          aria-label="Filter by sport"
+          aria-label={UI_CONSTANTS.FILTER_BY_SPORT_LABEL}
         >
-          <option value="All">All sports</option>
+          <option value={UI_CONSTANTS.ALL_SPORTS_TERM}>{UI_CONSTANTS.ALL_SPORTS_TERM}</option>
           {sports.map((sport) => (
             <option key={sport} value={sport}>
               {sport}

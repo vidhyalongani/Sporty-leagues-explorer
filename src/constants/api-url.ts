@@ -1,0 +1,1 @@
+export const ALL_LEAGUES_URL = 'https://www.thesportsdb.com/api/v1/json/3/all_leagues.php';

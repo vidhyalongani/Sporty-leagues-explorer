@@ -1,4 +1,4 @@
-import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import z from 'zod';
 import './App.css';
 import fallbackBadge from './assets/fallback-badge.svg';
@@ -17,6 +17,10 @@ const leagueSchema = z.object({
   strSport: z.string().optional().default(''),
   strLeagueAlternate: z.string().optional().default(''),
 });
+const seasonSchema = z.object({
+  strBadge: z.string().optional().nullable().default(''),
+});
+const seasonsSchema = z.array(seasonSchema);
 
 function App() {
   const [leagues, setLeagues] = useState<League[]>([]);
@@ -26,6 +30,7 @@ function App() {
   const [sportFilter, setSportFilter] = useState('All');
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
   const [badgeMap, setBadgeMap] = useState<Record<string, string>>({});
+  const inFlightBadgesRef = useRef<Set<string>>(new Set());
 
   const cacheBadgeForLeague = useCallback((leagueId: string, badgeUrl: string) => {
     setBadgeMap(prev => ({ ...prev, [leagueId]: badgeUrl }));
@@ -95,21 +100,27 @@ function App() {
   }, [leagues, deferredSearchTerm, sportFilter]);
 
   const fetchBadgeForLeague = useCallback(async (leagueId: string) => {
+    if (badgeMap[leagueId] || inFlightBadgesRef.current.has(leagueId)) return;
+    inFlightBadgesRef.current.add(leagueId);
     try {
       const response = await fetch(`${API_CONSTANTS.SEASON_BADGE_URL}${encodeURIComponent(leagueId)}`);
       if (!response.ok) {
         throw new Error(`Network response for season badge fetch has errors: ${response.status}`);
       }
       const data = await response.json();
-      const seasons = Array.isArray(data?.seasons) ? data.seasons : [];
-      const rawBadge = seasons.find((s: { strBadge?: string | null }) => s?.strBadge)?.strBadge ?? '';
-      const badgeUrl = rawBadge.trim() !== '' ? rawBadge : fallbackBadge;
+      const parsedSeasons = seasonsSchema.safeParse(data?.seasons ?? []);
+      const seasons = parsedSeasons.success ? parsedSeasons.data : [];
+      const rawBadge =
+        seasons.find((s) => typeof s.strBadge === 'string' && s.strBadge.trim() !== '')?.strBadge ?? '';
+      const badgeUrl = rawBadge !== '' ? rawBadge : fallbackBadge;
       cacheBadgeForLeague(leagueId, badgeUrl);
     } catch (error) {
       console.error('Error fetching badge:', error);
       cacheBadgeForLeague(leagueId, fallbackBadge);
+    } finally {
+      inFlightBadgesRef.current.delete(leagueId);
     }
-  }, [cacheBadgeForLeague]);
+  }, [badgeMap, cacheBadgeForLeague]);
 
   const handleLeagueClick = useCallback((league: League | null) => {
     if (!league) {
@@ -117,12 +128,7 @@ function App() {
       return;
     }
     setSelectedLeague(league);
-    setBadgeMap(prev => {
-      if (!prev[league.idLeague]) {
-        fetchBadgeForLeague(league.idLeague);
-      }
-      return prev;
-    });
+    fetchBadgeForLeague(league.idLeague);
   }, [fetchBadgeForLeague]);
 
   return (     

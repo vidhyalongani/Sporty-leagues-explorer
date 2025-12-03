@@ -24,12 +24,16 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sportFilter, setSportFilter] = useState('All');
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null);
+  const [badgeMap, setBadgeMap] = useState<Record<string, string>>({});
+
+  const cacheBadgeForLeague = (leagueId: string, badgeUrl: string) => {
+    setBadgeMap(prev => ({ ...prev, [leagueId]: badgeUrl }));
+  };
 
   const deferredSearchTerm = useDeferredValue(searchTerm);
   
   useEffect(() => {
     const controller = new AbortController();
-
     const fetchLeagues = async () => {
       setIsLoading(true);
       setFetchError(null);
@@ -54,13 +58,11 @@ function App() {
         setIsLoading(false);
       }
     };
-
     if (leaguesCache.current) {
       setLeagues(leaguesCache.current);
     } else {
       fetchLeagues();
     }
-
     return () => controller.abort();
   }, []);
 
@@ -99,11 +101,9 @@ function App() {
       }
       const data = await response.json();
       const seasons = Array.isArray(data?.seasons) ? data.seasons : [];
-      
       const rawBadge = seasons.find((s: { strBadge?: string | null }) => s?.strBadge)?.strBadge ?? '';
       const badgeUrl = rawBadge.trim() !== '' ? rawBadge : fallbackBadge;
-      console.log({ badgeUrl });
-
+      cacheBadgeForLeague(leagueId, badgeUrl);
     } catch (error) {
       console.error('Error fetching badge:', error);
     }
@@ -115,8 +115,12 @@ function App() {
       return;
     }
     setSelectedLeague(league);
-    fetchBadgeForLeague(league.idLeague);
-    console.log({ league })
+    setBadgeMap(prev => {
+      if (!prev[league.idLeague]) {
+        fetchBadgeForLeague(league.idLeague);
+      }
+      return prev;
+    });
   };
 
   return (     

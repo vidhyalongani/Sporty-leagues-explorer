@@ -3,11 +3,16 @@
   --secondary: #0d9737;
   --accent: #ffb404;
   --surface: #f6f7fb;
+  --surface-soft: #f2f4f9;
+  --surface-alt: #f8fafc;
+  --surface-hover: #e8edf4;
   --panel: #ffffff;
   --panel-strong: #eef1f6;
   --text: #0f172a;
+  --text-inverse: #ffffff;
   --muted: #475569;
   --border: #e5e7eb;
+  --border-strong: #e2e8f0;
   --shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
   --content-max: 1200px;
   --radius-sm: 8px;
@@ -40,7 +45,12 @@ body {
   height: 100%;
   overflow: auto;
   min-height: 100vh;
-  background: linear-gradient(180deg, #f6f7fb 0%, #f2f4f9 50%, #eef1f6 100%);
+  background: linear-gradient(
+    180deg,
+    var(--surface) 0%,
+    var(--surface-soft) 50%,
+    var(--panel-strong) 100%
+  );
   color: var(--text);
 }
 

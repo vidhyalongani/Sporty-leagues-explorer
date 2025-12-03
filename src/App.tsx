@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import z from 'zod';
 import './App.css';
 import sportyLogo from './assets/sporty-logo.webp';
@@ -21,7 +21,6 @@ function App() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sportFilter, setSportFilter] = useState('All');
-  const sports = ['Soccer', 'Basketball', 'Baseball', 'Hockey', 'Tennis', 'Cricket'];
   
   useEffect(() => {
     const controller = new AbortController();
@@ -59,6 +58,15 @@ function App() {
 
     return () => controller.abort();
   }, []);
+
+  const sports = useMemo(() => {
+    const uniqueSportSet = new Set<string>();
+    leagues.forEach((league) => {
+      if (!league.strSport) return;
+      uniqueSportSet.add(league.strSport);
+    });
+    return Array.from(uniqueSportSet).sort((a, b) => a.localeCompare(b));
+  }, [leagues]);
 
   return (     
     <main className="page">

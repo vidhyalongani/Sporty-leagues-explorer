@@ -103,32 +103,30 @@ function App() {
 
       <div className="content">
         <div className="content-inner">
-          <section className="controls" aria-label="Filters">
-            <LeagueFilters
-              searchTerm={searchTerm}
-              sportFilter={sportFilter}
-              sports={sports}
-              onSearchChange={setSearchTerm}
-              onSportChange={filterBySport}
-            />
-          </section>
-          <section className="leagues" aria-label="Leagues List">
-            {fetchError && (
-              <div className="error" role="alert">
-                Unable to load leagues: {fetchError}
-              </div>
-            )}
-
-            <div className="list-container">
-              {isLoading ? (
-                <span className="loading">Loading leagues...</span>
-              ) : ( filteredLeagues.length === 0 ? (
-                <div className="empty">{UI_CONSTANTS.EMPTY_STATE}</div>
-              ) : (
-                <LeagueList leagues={filteredLeagues} />
-              ))}
+          <LeagueFilters
+            searchTerm={searchTerm}
+            sportFilter={sportFilter}
+            sports={sports}
+            onSearchChange={setSearchTerm}
+            onSportChange={filterBySport}
+          />
+          
+          {fetchError && (
+            <div className="error" role="alert">
+              Unable to load leagues: {fetchError}
             </div>
-          </section>
+          )}
+
+          <div className="list-container">
+            {isLoading ? (
+              <span className="loading">Loading leagues...</span>
+            ) : ( filteredLeagues.length === 0 ? (
+              <div className="empty">{UI_CONSTANTS.EMPTY_STATE}</div>
+            ) : (
+              <LeagueList leagues={filteredLeagues} />
+            ))}
+          </div>
+        
         </div>
       </div>
 
